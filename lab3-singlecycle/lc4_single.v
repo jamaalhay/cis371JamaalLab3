@@ -64,11 +64,26 @@ module lc4_processor
 
    /* END DO NOT MODIFY THIS CODE */
 
-
+   wire [2:0] 	 rs, rt, rd;
+   wire 	 rsre, rtre, rd_we, nzp_we, pc_plus_one, is_load, is_store, is_branch, is_control_insn, is_alu;
+   
+	       
    /*******************************
     * TODO: INSERT YOUR CODE HERE *
     *******************************/
-
+   lc4_decoder decode(.insn(i_cur_insn), .r1sel(rs), .r1re(rsre), .r2sel(rt),     .r2re(rtre), .wsel(rd), .regfile_we(rd_we), .nzp_we(nzp_we), .select_pc_plus_one(pc_plus_one), .is_load(is_load), .is_store(is_store), .is_branch(is_branch), .is_control_insn(is_control_insn));
+   wire [15:0] 	 o_result, rs_data, rt_data;
+ 
+   assign is_alu = is_load||is_store||is_branch|| is_control_insn ? 1'b0: 1'b1;
+   assign o_dmem_addr = is_alu ? 16'd0 : 16'd5; // We should put an output wire in the decoder for the address to load / store to
+   assign o_dmem_we = is_store || is_load ? 1'b1 : 1'b0;
+   assign o_cur_pc = pc;
+   assign o_dmem_towrite = is_store ? 16'FFFF : 16'd0; // Dummy value
+   lc4_alu alu(.i_insn(i_cur_insn), .i_pc(pc), .i_r1data(rs_data), .i_r2data(rt_data), .o_result(o_result)
+   lc4_regfile reg(.clk(clk), .gwe(gwe), .rst(rst), .i_rs(rs), .i_rt(rt),   .i_rd(rd), .i_wdata(o_result), .i_rd_we(rd_we), .o_rs_data(rs_data), .o_rt_data(rt_data))
+   
+   
+		      
 
 
    /* Add $display(...) calls in the always block below to
