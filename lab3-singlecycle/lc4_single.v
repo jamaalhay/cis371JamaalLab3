@@ -78,9 +78,11 @@ module lc4_processor
    assign o_dmem_addr = is_alu ? 16'd0 : 16'd5; // We should put an output wire in the decoder for the address to load / store to
    assign o_dmem_we = is_store || is_load ? 1'b1 : 1'b0;
    assign o_cur_pc = pc;
-   assign o_dmem_towrite = is_store ? 16'FFFF : 16'd0; // Dummy value
-   lc4_alu alu(.i_insn(i_cur_insn), .i_pc(pc), .i_r1data(rs_data), .i_r2data(rt_data), .o_result(o_result)
-   lc4_regfile reg(.clk(clk), .gwe(gwe), .rst(rst), .i_rs(rs), .i_rt(rt),   .i_rd(rd), .i_wdata(o_result), .i_rd_we(rd_we), .o_rs_data(rs_data), .o_rt_data(rt_data))
+   assign o_dmem_towrite = is_store ? 16'hFFFF : 16'd0; // Dummy value
+   lc4_alu alu(.i_insn(i_cur_insn), .i_pc(pc), .i_r1data(rs_data), .i_r2data(rt_data), .o_result(o_result));
+   
+     lc4_regfile registers(.clk(clk), .gwe(gwe), .rst(rst), .i_rs(rs), .i_rt(rt),   .i_rd(rd), .i_wdata(o_result), .i_rd_we(rd_we), .o_rs_data(rs_data), .o_rt_data(rt_data));
+   
    
    
 		      
